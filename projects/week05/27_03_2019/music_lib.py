@@ -58,8 +58,43 @@ class Song:
 class Playlist(Song):
     def __init__(self, name, repeat=False, shuffle=False):
         self.name = name
+        self.songs = []
 
-s = Song(title="Odin", artist="Manowar", album="The Sons of Odin", length="3:44")
+    def add_song(self, song):
+        if isinstance(song, Song):
+            self.songs.append(song)
 
-print(s.__str__())
-print(s.length_of(minutes=True))
+    def remove_song(self, song):
+        if isinstance(song, Song):
+            self.songs.remove(song)
+
+    def total_length(self):
+        total_sec = 0
+        for song in self.songs:
+            if isinstance(song, Song):
+                total_sec += song.length_of(seconds=True)
+
+        total_sec, s = divmod(total_sec, 60)
+        h, m = divmod(total_sec, 60)
+
+        if h == 0:
+            return "%02d:%02d" % (m, s)
+        else:
+            return "%d:%02d:%02d" % (h, m, s)
+
+s1 = Song(title="Odin", artist="Manowar", album="The Sons of Odin", length="3:44")
+s2 = Song(title="The Sons of Odin", artist="Manowar", album="The Sons of Odin", length="6:26")
+
+# print(s1.__str__())
+# print(s1.length_of(minutes=True))
+
+p = Playlist(name="Pesho")
+# print(p.songs)
+p.add_song(s1)
+# print(p.songs)
+p.add_song(s2)
+# print(p.songs)
+# p.remove_song(s1)
+# print(p.songs)
+
+print(p.total_length())
