@@ -1,3 +1,5 @@
+import random
+
 class Song:
     def __init__(self, title, artist, album, length):
         self.title = title
@@ -82,6 +84,33 @@ class Playlist(Song):
         else:
             return "%d:%02d:%02d" % (h, m, s)
 
+    def artists(self):
+        result = {}
+
+        for song in self.songs:
+            if isinstance(song, Song):
+                result[song.artist] = result.get(song.artist, 0) + 1
+
+        return result
+
+    def next_song(self):
+        randints = []
+
+        while len(randints) != len(self.songs):
+            r = random.randint(1, len(self.songs))
+            if r not in randints:
+                randints.append(r)
+
+        self.curr_song_index = randints[0]
+
+        if self.curr_song_index == len(self.songs):
+            if self.repeat == False and self.shuffle == False:
+                return "You reached the end of the playlist"
+            elif self.repeat == True and self.shuffle == False:
+                return self.songs[0]
+            elif self.repeat == True and self.shuffle == True:
+                return self.songs[randints[random.randint(1, len(randints))]]            
+
 s1 = Song(title="Odin", artist="Manowar", album="The Sons of Odin", length="3:44")
 s2 = Song(title="The Sons of Odin", artist="Manowar", album="The Sons of Odin", length="6:26")
 
@@ -98,3 +127,4 @@ p.add_song(s2)
 # print(p.songs)
 
 print(p.total_length())
+print(p.artists())
