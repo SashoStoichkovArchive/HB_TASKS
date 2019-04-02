@@ -60,6 +60,8 @@ class Song:
 class Playlist(Song):
     def __init__(self, name, repeat=False, shuffle=False):
         self.name = name
+        self.repeat = repeat
+        self.shuffle = shuffle
         self.songs = []
 
     def add_song(self, song):
@@ -69,6 +71,11 @@ class Playlist(Song):
     def remove_song(self, song):
         if isinstance(song, Song):
             self.songs.remove(song)
+
+    def add_songs(self, songs):
+        for song in songs:
+            if isinstance(song, Song):
+                self.songs.append(song)
 
     def total_length(self):
         total_sec = 0
@@ -97,27 +104,43 @@ class Playlist(Song):
         randints = []
 
         while len(randints) != len(self.songs):
-            r = random.randint(1, len(self.songs))
+            r = random.randint(0, len(self.songs)-1)
             if r not in randints:
                 randints.append(r)
 
         self.curr_song_index = randints[0]
 
         if self.curr_song_index == len(self.songs):
-            if self.repeat == False and self.shuffle == False:
+            if self.repeat == False:
                 return "You reached the end of the playlist"
             elif self.repeat == True and self.shuffle == False:
                 return self.songs[0]
-            elif self.repeat == True and self.shuffle == True:
-                return self.songs[randints[random.randint(1, len(randints))]]            
+            else:
+                return self.songs[randints[randints.index(self.curr_song_index)+1]]
 
-s1 = Song(title="Odin", artist="Manowar", album="The Sons of Odin", length="3:44")
-s2 = Song(title="The Sons of Odin", artist="Manowar", album="The Sons of Odin", length="6:26")
+        else:
+            if self.shuffle == False:
+                return self.songs[randints.index(self.curr_song_index)+1]
+            else:
+                return self.songs[randints[randints.index(self.curr_song_index)+1]]
+
+    def pprint_playlist(self):
+        print("| {:<15} | {:<30} | {:<10} |".format("Artist", "Song", "Length"))
+        print("|" + "-"*17 + "|" + "-"*32 + "|" + "-"*12 + "|")
+        for song in self.songs:
+            if isinstance(song, Song):
+                print("| {:<15} | {:<30} | {:<10} |".format(song.artist, song.title, song.length))
+                
+
+s1 = Song(title="Odin", artist="Misho", album="The Sons of Odin", length="3:44")
+s2 = Song(title="The Sons of Odin", artist="Pesho", album="The Sons of Odin", length="6:26")
+s3 = Song(title="Odin", artist="Gosho", album="The Sons of Odin", length="4:33")
+s4 = Song(title="The Sons of Odin", artist="Tosho", album="The Sons of Odin", length="5:17")
 
 # print(s1.__str__())
 # print(s1.length_of(minutes=True))
 
-p = Playlist(name="Pesho")
+p = Playlist(name="Pesho", repeat=True, shuffle=True)
 # print(p.songs)
 p.add_song(s1)
 # print(p.songs)
@@ -125,6 +148,12 @@ p.add_song(s2)
 # print(p.songs)
 # p.remove_song(s1)
 # print(p.songs)
+p.add_songs([s3, s4])
+# print(p.songs)
 
-print(p.total_length())
-print(p.artists())
+# print(p.total_length())
+# print(p.artists())
+
+# print(p.next_song())
+
+# p.pprint_playlist()
