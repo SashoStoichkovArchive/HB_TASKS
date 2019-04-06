@@ -7,6 +7,7 @@ def mousepos():
 
 def is_in_corner():
     try:
+        print(mousepos())
         if mousepos() == (0, 0):
             os.system('play -nq -t alsa synth {} sine {}'.format(0.1, 1000)) # beep
     except KeyboardInterrupt:
