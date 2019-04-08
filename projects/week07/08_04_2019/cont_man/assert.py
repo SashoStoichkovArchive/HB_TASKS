@@ -10,7 +10,7 @@ class assertRaises:
             print("{0} was not raised".format(self.expected_exc.__name__))
         elif isinstance(exc_value, self.expected_exc):
             print("{0} was raised Success!".format(self.expected_exc.__name__))
-        print("{0} was raised Fail!".format(exc_type.__name__))
+        print("{0} was raised, not {1} Fail!".format(exc_type.__name__, self.expected_exc.__name__))
         return True
 
 def do_something():
