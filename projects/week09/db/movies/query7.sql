@@ -1,0 +1,1 @@
+UPDATE MOVIE SET STUDIONAME='Fox' WHERE TITLE like '%star%';
