@@ -1,6 +1,7 @@
 class assertRaises:
     def __init__(self, expected_exc, msg=None):
         self.expected_exc = expected_exc
+        self.msg = msg
 
     def __enter__(self):
         return self
