@@ -1,0 +1,1 @@
+SELECT AVG(price) FROM pc GROUP BY hd;
