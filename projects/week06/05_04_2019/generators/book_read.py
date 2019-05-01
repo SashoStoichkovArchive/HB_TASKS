@@ -1,7 +1,7 @@
 import keyboard, os
 
-first_part = open("../book/001.txt", "r")
-second_part = open("../book/002.txt", "r")
+first_part = open("book/001.txt", "r")
+second_part = open("book/002.txt", "r")
 
 for line in first_part:
     if line.startswith("#"):
