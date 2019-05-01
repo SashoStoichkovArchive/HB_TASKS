@@ -72,7 +72,7 @@ def matrix_bombing_plan(m):
             drop_bomb(add_m, x, y)
             result.update({(x, y): sum_of_el_in_matrix(add_m)})
             
-    pprint.pprint(result)
+    return result
 
 if __name__ == "__main__":
-    matrix_bombing_plan([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    pprint.pprint(matrix_bombing_plan([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))

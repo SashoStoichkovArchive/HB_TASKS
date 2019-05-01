@@ -10,3 +10,7 @@ def reduce_file_path(path):
         else:
             current_path.append(part)
     return '/' + '/'.join(current_path)
+
+if __name__ == "__main__":
+    path = str(input())
+    print(reduce_file_path(path))
