@@ -1,43 +1,60 @@
-import math
+def int_or_float(n: float):
+    return int(n) if n.is_integer() else n
 
-def rpn_calc(expr):
-    expr_arr = expr.split(' ')
+def _evaluate(op1, op2, operator):
+    if operator == '+':
+        result =  float(op1) + float(op2)
 
-    operators = ['+', '-', '*', '/', 'SQRT']
+    elif operator == '-':
+        result = float(op1) - float(op2)
 
-    if operators not in expr_arr and len(expr_arr) == 1:
-        return float(expr_arr[0])
+    elif operator == '*':
+        result = float(op1) * float(op2)
 
-    for i in range(len(expr_arr)):
-        if expr_arr[i] in operators:
-            if expr_arr[i] == '+':
-                expr_arr[i-1] = str(int(expr_arr[i-2]) + int(expr_arr[i-1]))
-                expr_arr.pop(0)
-                expr_arr.pop(i-1)
+    elif operator == '/':
+        result = float(op1) / float(op2)
+    
+    return int_or_float(result)
 
-            elif expr_arr[i] == '-':
-                expr_arr[i-1] = str(int(expr_arr[i-2]) - int(expr_arr[i-1]))
-                expr_arr.pop(0)
-                expr_arr.pop(i-1)
+def SQRT(x):
+    from math import sqrt
 
-            elif expr_arr[i] == '*':
-                expr_arr[i-1] = str(int(expr_arr[i-2]) * int(expr_arr[i-1]))
-                expr_arr.pop(0)
-                expr_arr.pop(i-1)
+    return int_or_float(sqrt(float(x)))
 
-            elif expr_arr[i] == '/':
-                expr_arr[i-1] = str(int(expr_arr[i-2]) / int(expr_arr[i-1]))
-                expr_arr.pop(0)
-                expr_arr.pop(i-1)
+def MAX(stack):
+    return int_or_float(float(max(stack)))
 
-            elif expr_arr[i] == 'SQRT':
-                expr_arr[i-1] = str(math.sqrt(int(expr_arr[i-1])))
-                expr_arr.pop(i)
+def MIN(stack):
+    return int_or_float(float(min(stack)))
 
-    return float(expr_arr[0])
+def rpn_calculate(expr):
+    if len(expr) == 1:
+        return int_or_float(float(expr))
+
+    operators = ['+', '-', '*', '/', 'SQRT', 'MIN', 'MAX']
+    stack = []
+
+    for char in expr.split(' '):
+        if char not in operators:
+            stack.append(char)
+
+        elif char == 'SQRT':
+            stack.append(SQRT(stack.pop()))
+        
+        elif char == 'MAX' or char == 'MIN':
+            stack = [MAX(stack)] if char == 'MAX' else [MIN(stack)]
+        
+        elif len(stack) >= 2:
+            op2 = stack.pop()
+            op1 = stack.pop()
+            stack.append(_evaluate(op1, op2, char))
+
+        elif len(stack) == 1 and char == '-':
+            return stack[0]*-1
+
+    return stack[0]
 
 if __name__ == "__main__":
-    print(rpn_calc('20 4 /'))
-    print(rpn_calc('9 SQRT'))
-    print(rpn_calc('4 2 + 3 -'))
-    print(rpn_calc('3 5 8 * 7 + *'))
+    expr = str(input())
+
+    print(rpn_calculate(expr))
