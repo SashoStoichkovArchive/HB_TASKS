@@ -1,82 +1,77 @@
 class Bill:
     def __init__(self, amount):
-        if type(amount) is not int:
-            raise TypeError("String is not integer")
-        if amount < 0:
-            raise ValueError("Integer is less than 0")
-        
+        self.validate_amount(amount)
         self.amount = amount
-    
+
     def __str__(self):
-        return "A {0}$ {1}".format(self.amount, "Bill")
-
-    def __repr__(self):
-        return self.__str__()
-
-    def __eq__(self, other):
-        return True
-
-    def __hash__(self):
-        return hash(self.amount*(self.amount^2)*(self.amount*(self.amount + (self.amount*365))))
+        return 'A {} $ bill'.format(self.amount)
 
     def __int__(self):
         return self.amount
 
+    def __eq__(self, other):
+        return True if self.amount == other.amount else False
+
+    def __repr__(self):
+        return 'Bill object at {}'.format(id(self))
+
+    def __hash__(self):
+        return self.amount
+
+    def validate_amount(self, amount):
+        if not isinstance(amount, int):
+            raise TypeError('Error, provided data not in correct format!')
+        elif amount < 0:
+            raise ValueError('Error, amount must be greater than 1!')
+
+
 class BillBatch:
-    def __init__(self, batch):
-        self.batch = batch
-
+    def __init__(self, bill_list):
+        self.bill_list = bill_list
+    
     def __len__(self):
-        return len(self.batch)
-
-    def total(self):
-        result = 0
-
-        for i in range(self.__len__()):
-            result += self.batch[i]
-
-        return result
+        return len(self.bill_list)
 
     def __getitem__(self, index):
-        return self.batch[index]
+        return self.bill_list[index]
+    
+    def total(self):
+        return sum([int(bill) for bill in self.bill_list])
+
 
 class CashDesk:
     def __init__(self):
-        self.desk = {}
-        self.all_money = []
+        self.desk = []
 
-    def take_money(self, money):
-        count = 1
-        if isinstance(money, Bill):
-            self.all_money.append(money)
-            if "{0}$ bills".format(money) not in self.desk:
-                self.desk.update({"{0}$ bills".format(money): count})
-            else:
-                self.desk.update({"{0}$ bills".format(money): count+1})
+    def take_money(self, bills):
+        if isinstance(bills, BillBatch):
+            self.desk += bills
+        elif isinstance(bills, Bill):
+            self.desk.append(bills)
         else:
-            for i in range(money.__len__()):
-                self.all_money.append(money[i])
-                if "{0}$ bills".format(money[i]) not in self.desk:
-                    self.desk.update({"{0}$ bills".format(money[i]): count})
-                else:
-                    self.desk.update({"{0}$ bills".format(money[i]): count+1})
+            raise TypeError('Error, provided data is not and instance of BillBatch or Bill!')
+
+    def __getitem__(self, index):
+        return self.desk[index]
 
     def __len__(self):
         return len(self.desk)
 
     def total(self):
-        result = 0
+        return sum([int(bill) for bill in self.desk])
 
-        for el in self.all_money:
-            result += int(el)
+    def inspect(self):
+        bill_table = {}
+        for bill in desk:
+            if bill not in bill_table:
+                bill_table[bill] = 1
+            else:
+                bill_table[bill] += 1
+        for bill, number in bill_table.items():
+            print(bill, number)
 
-        return result
 
-    def inspect(self, money):
-        print("We have a total of {0}$ in the desk".format(self.total()))
-        print("We have the following count of bills")
-        
-if __name__ == "__main__":
+if __name__ == '__main__':
     values = [10, 20, 50, 100, 100, 100]
     bills = [Bill(value) for value in values]
 
@@ -88,11 +83,24 @@ if __name__ == "__main__":
     desk.take_money(Bill(10))
 
     print(desk.total()) # 390
-    desk.inspect(values)
+    desk.inspect()
 
-    # We have a total of 390$ in the desk
-    # We have the following count of bills, sorted in ascending order:
-    # 10$ bills - 2
-    # 20$ bills - 1
-    # 50$ bills - 1
-    # 100$ bills - 3
+    values = [10, 20, 50, 100]
+    bills = [Bill(value) for value in values]
+
+    batch = BillBatch(bills)
+
+    for bill in batch:
+        print(bill)
+    
+    print(batch.total())
+
+    a = Bill(10)
+    b = Bill(5)
+    c = Bill(8)
+
+    money_holder = {}
+    money_holder[c] = 1
+    if c in money_holder:
+        money_holder[c] += 1
+    print(money_holder)
