@@ -1,15 +1,11 @@
-SELECT (laptop_sum + pc_sum)/2 avarage_sum 
-	FROM (
-		SELECT SUM(price) laptop_sum 
-			FROM product 
-			INNER JOIN laptop 
-				ON product.model = laptop.model 
-			WHERE maker='B'
-	) 
-	JOIN (
-		SELECT SUM(price) pc_sum
-			FROM product
-			INNER JOIN pc 
-				ON product.model = pc.model 
-			WHERE maker='B'
-	);
+SELECT type, AVG(price) FROM laptop
+    INNER JOIN product
+        ON laptop.model = product.model
+WHERE product.maker = 'B'
+
+UNION
+
+SELECT type, AVG(price) FROM pc
+    INNER JOIN product
+        ON pc.model = product.model
+WHERE product.maker = 'B';
