@@ -1,83 +1,131 @@
-import sys
+import re
 
 class Monomial:
-    def __init__(self, mono):
-        self.mono = mono
+    def __init__(self, monomial):
+        self._sign = Monomial.parse_sign(monomial)
+        self._variable = Monomial.parse_variable(monomial)
+        self._exponent = Monomial.parse_exponent(monomial, self._variable)
+        self._coefficient = Monomial.parse_coefficient(monomial, self._variable)
 
-    def get_derivative(self):
-        if self.mono[0] in '-123456789':
-            c = self.mono[0]
-        
-        for i in range(1, len(self.mono)):
-            if self.mono[i] in '0123456789':
-                c += self.mono[i]
-                if i == len(self.mono) - 1:
-                    return str(0)
-            else:
-                if self.mono[i] in 'qwertyuiopasdfghjklzxcvbnm':
-                    x = self.mono[i]
-                    if i == len(self.mono) - 1:
-                        return c
-                    else:
-                        i += 1
-                        if self.mono[i] == '^':
-                            i += 1
-                            num = ''
-                            while i <= len(self.mono) - 1:
-                                num += self.mono[i]
-                                i += 1
+    def __str__(self):
+        monomial_str = ''
+        if self.coefficient != 1:
+            monomial_str += str(self.coefficient)
+        if self.variable != '':
+            monomial_str += self.variable
+        elif self.variable == '' and self.coefficient == 1:
+            monomial_str += str(self.coefficient)
+        if self.exponent > 1:
+            monomial_str += '^' + str(self.exponent)
+        return monomial_str
 
-                            return str(int(c) * int(num)) + '*x^' + str(int(num) - 1)
+    def __repr__(self):
+        return self.__str__()
 
-class Polynomial(Monomial):
-    def __init__(self, poly):
-        self.poly = poly
+    def __eq__(self, other):
+        return self.coefficient == other.coefficient and self.exponent == other.exponent
 
-    def get_monomials(self):
-        arr = []
-        i = 0
+    def __gt__(self, other):
+        return self.exponent > other.exponent
 
-        while i <= len(self.poly)-1:
-            string = ''
+    @property
+    def sign(self):
+        return self._sign
 
-            if self.poly[i] == '-':
-                string += self.poly[i]
-                i += 1
+    @property
+    def variable(self):
+        return self._variable
 
-            while i <= len(self.poly)-1 and self.poly[i] not in '+-':
-                string += self.poly[i]
-                i += 1
+    @property
+    def exponent(self):
+        return self._exponent
 
-            arr.append(string)
+    @property
+    def coefficient(self):
+        return self._coefficient
 
-            if i <= len(self.poly) - 1 and self.poly[i] == '+':
-                i += 1
-            else:
-                continue
+    @staticmethod
+    def parse_sign(monomial):
+        pattern = re.compile(r'[-+]')
+        sign = pattern.search(monomial)
+        return sign[0] if sign else '+'
 
-        return arr
+    @staticmethod
+    def parse_variable(monomial):
+        pattern = re.compile(r'[a-zA-Z]')
+        variable = pattern.search(monomial)
+        return variable[0] if variable else ''
 
-    def get_derivatives(self):
-        arr = self
-        der = []
+    @staticmethod
+    def parse_exponent(monomial, variable):
+        if variable == '':
+            return 0
+        else:
+            pattern = re.compile(r'({})\^?(\d*)'.format(variable))
+            match = pattern.search(monomial)
+            if match:
+                try:
+                    exponent = int(match.group(2))
+                except ValueError:
+                    exponent = 1
+        return exponent
 
-        for mono in arr:
-            mon = Monomial(mono)
-            der.append(mon.get_derivative())
+    @staticmethod
+    def parse_coefficient(monomial, variable):
+        pattern = re.compile(r'\+?-?(\d*)\*?{}?'.format(variable))
+        match = pattern.search(monomial)
+        return int(match.group(1)) if match.group(1) else 1
 
-        return der
+    def get_first_derivative(self):
+        if self.variable is '':
+            return __class__('0')
+        derivative = ''
+        coefficient = self.coefficient * self.exponent
+        exponent = self.exponent - 1
+        if coefficient == 0:
+            return __class__('')
+        elif coefficient >= 1:
+            derivative += str(coefficient) + '*'
+        if exponent == 0:
+            return __class__(self.sign + derivative)
+        if exponent == 1:
+            derivative += self.variable
+        elif exponent > 1:
+            derivative += self.variable + '^' + str(exponent)
+        return __class__(self.sign + derivative)
 
-    def get_result(self):
-        der = self
-        result = ''
+class Polynomial:
+    def __init__(self, polynomial):
+        self.monomial_list = polynomial
 
-        for deriv in der:
-            if deriv == '0':
-                continue
-            else:
-                if deriv[0] in '123456789':
-                    result = result + '+' + deriv
-                else:
-                    result += deriv
+    @property
+    def monomial_list(self):
+        return self._monomial_list
 
-        return result
+    @monomial_list.setter
+    def monomial_list(self, polynomial):
+        pattern = re.compile(r'\+?-?[0-9a-zA-Z*^]*')
+        self._monomial_list = [Monomial(monomial)
+                               for monomial in re.findall(pattern, polynomial)[:-1:]]
+
+    def get_first_derivative(self):
+        deriv_list = [monomial.get_first_derivative()
+                      for monomial in self.monomial_list]
+        return deriv_list
+
+    def print_first_derivative(self):
+        deriv_list = self.get_first_derivative()
+        deriv_list.sort(key=lambda monomial: monomial.exponent, reverse=True)
+        try:
+            first_deriv = str(deriv_list[0]) if str(deriv_list[0]) != '0' else ''
+            for deriv in deriv_list[1:]:
+                if str(deriv) != '0':
+                    first_deriv += deriv.sign + str(deriv)
+        except IndexError:
+            pass
+        else:
+            return first_deriv
+
+if __name__ == "__main__":
+    p = Polynomial('x^3+x+2*x+x^10')
+    print(p.print_first_derivative())
