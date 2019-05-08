@@ -54,3 +54,6 @@ docs/_build/
 
 # TXT files
 *.txt
+
+# DB files
+*.db
