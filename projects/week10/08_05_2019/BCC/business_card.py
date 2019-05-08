@@ -68,8 +68,8 @@ def add_business_card():
 
     cursor.execute(
         """
-        INSERT INTO User (name, email, age, phone, add_info) VALUES('{name}', '{email}', {age}, '{phone}', '{add_info}');
-        """.format(name=name, email=email, age=age, phone=phone, add_info=add_info)
+        INSERT INTO User (name, email, age, phone, add_info) VALUES(?, ?, ?, ?, ?);
+        """, (name, email, age, phone, add_info)
     )
 
     connection.commit()
@@ -95,8 +95,8 @@ def get_business_card(id):
 
     cursor.execute(
         """
-        SELECT * FROM User WHERE id={id};
-        """.format(id=id)
+        SELECT * FROM User WHERE id=?;
+        """, (id,)
     )
     id, name, email, age, phone, add_info = cursor.fetchone()
 
@@ -127,8 +127,8 @@ def delete_business_card(id):
 
     cursor.execute(
         """
-        DELETE FROM User WHERE id={id}
-        """.format(id=id)
+        DELETE FROM User WHERE id=?;
+        """, (id,)
     )
 
     connection.commit()
