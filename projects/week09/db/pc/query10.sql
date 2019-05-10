@@ -1,8 +1,4 @@
-SELECT product.maker, AVG(hd) as DiskSpaceAvg 
+SELECT AVG(cd)
     FROM pc
-    INNER JOIN product
-       ON pc.model = product.model
-    GROUP BY maker
-        HAVING product.maker IN (SELECT maker FROM printer 
-                                    INNER JOIN product
-                                        ON printer.model = product.model);
+    JOIN product ON product.model=pc.model
+    WHERE maker IN (SELECT maker FROM product WHERE type='Printer');

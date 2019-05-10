@@ -1,11 +1,5 @@
-SELECT type, AVG(price) FROM laptop
-    INNER JOIN product
-        ON laptop.model = product.model
-WHERE product.maker = 'B'
-
-UNION
-
-SELECT type, AVG(price) FROM pc
-    INNER JOIN product
-        ON pc.model = product.model
-WHERE product.maker = 'B';
+SELECT (SUM(pc.price) + SUM(laptop.price)) / COUNT(*)
+    FROM product
+    LEFT OUTER JOIN pc ON product.model = pc.model
+    LEFT OUTER JOIN laptop ON product.model = laptop.model
+    WHERE product.maker ='B';
