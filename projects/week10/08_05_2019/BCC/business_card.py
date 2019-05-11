@@ -102,7 +102,7 @@ def get_business_card(id):
 
     print(
 """
-Contact Info:
+Contact Information:
 
 ###############
 Id: {id},
