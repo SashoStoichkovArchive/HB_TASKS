@@ -1,0 +1,11 @@
+{% extends 'planes/base.html' %}
+
+{% block content %}
+    {% for flight in flights %}
+    <div>
+    <span>{{ flight.id }}</span>
+    <span>{{ flight.plane.name }}</span>
+    <span>{{ flight.user.email }}</span>
+    </div>
+    {% endfor %}
+{% endblock %}

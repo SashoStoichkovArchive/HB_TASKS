@@ -1,0 +1,8 @@
+<form method='post'>
+    {% csrf_token %}
+    {{form}}
+    <div> Are you sure</div>
+
+    <input type='submit' name='Create flight'/>
+
+</form>
