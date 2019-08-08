@@ -33,7 +33,7 @@ class Flight(models.Model):
 
 
     def __str__(self):
-        return f'Fligh for {self.user.email} from {self.from_dest} to {self.to_dest}'
+        return f'Flight for {self.user.username} from {self.from_dest} to {self.to_dest}'
 
 
 class FlightReservation(models.Model):

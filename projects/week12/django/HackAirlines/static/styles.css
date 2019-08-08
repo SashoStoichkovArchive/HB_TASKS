@@ -1,9 +1,0 @@
-img {
-    position: fixed;
-    z-index: -1;
-}
-
-form {
-    background: blue;
-    z-index: 5;
-}
