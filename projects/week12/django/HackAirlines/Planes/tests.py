@@ -27,19 +27,19 @@ class ViewsResponseTests(TestCase):
 
 class ViewsTemplateTests(TestCase):
 
-    def test_create_view_response(self):
+    def test_create_view_template_used(self):
         c = Client()
         res = c.get("/planes/flights/create/")
 
         self.assertTemplateUsed(res, 'planes/create.html')
 
-    def test_list_view_response(self):
+    def test_list_view_template_used(self):
         c = Client()
         res = c.get("/planes/flights/list/")
 
         self.assertTemplateUsed(res, 'planes/list.html')
 
-    def test_login_view_response(self):
+    def test_login_view_template_used(self):
         c = Client()
         res = c.get("/planes/login/")
 
